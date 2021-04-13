@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
 
     <application
         android:allowBackup="true"
@@ -18,18 +19,23 @@
         <activity android:name=".kotlin.MainActivity"
             android:label="Location Kotlin"
             >
-
-        </activity>
-
-        <activity android:name=".java.MainActivity"
-            android:label="Location Java"
-            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity android:name=".java.MainActivity"
+            android:label="Location Java"
+            >
+
+        </activity>
+
+        <service
+            android:name=".kotlin.TrackingService"
+            android:exported="false"
+            />
     </application>
 
 </manifest>

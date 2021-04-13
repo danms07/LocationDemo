@@ -9,6 +9,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.demo.hms.locationdemo.R
 import com.huawei.hms.common.ResolvableApiException
@@ -33,7 +34,8 @@ class MainActivity : AppCompatActivity(), GPS.OnGPSEventListener, View.OnClickLi
         if (!checkLocationPermissions())
             requestLocationPermissions()
         else setupGPS()
-        share.setOnClickListener(this)
+        start.setOnClickListener(this)
+        stop.setOnClickListener(this)
     }
 
     private fun checkLocationPermissions():Boolean {
@@ -85,9 +87,9 @@ class MainActivity : AppCompatActivity(), GPS.OnGPSEventListener, View.OnClickLi
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (checkLocationPermissions()){
-            setupGPS()
+            TrackingService.startService(this)
         }
-        else tv1.text = "You don't have GPS permissions"
+        //else tv1.text = "You don't have GPS permissions"
 
     }
 
@@ -98,7 +100,7 @@ class MainActivity : AppCompatActivity(), GPS.OnGPSEventListener, View.OnClickLi
     }
 
     override fun onResolutionRequired(e: Exception) {
-        tv1.text = e.toString()
+        //tv1.text = e.toString()
         try{
             val rae: ResolvableApiException = e as ResolvableApiException
             rae.startResolutionForResult(this, 0)
@@ -112,27 +114,32 @@ class MainActivity : AppCompatActivity(), GPS.OnGPSEventListener, View.OnClickLi
 
     override fun onLocationUpdate(lat: Double, lon: Double) {
         val string="Latitude: $lat \t Longitude:$lon"
-        tv1.text = string
+        //tv1.text = string
         this.lat =lat
         this.lon =lon
     }
 
     override fun onClick(v: View?) {
-        if(checkLocationPermissions())
-            gps?.isStarted.let {
-                if (it==true) shareLocation()
-                else setupGPS()
+        when(v?.id){
+            R.id.start->{
+                Toast.makeText(this,"onStart",Toast.LENGTH_SHORT).show()
+                if(checkLocationPermissions())
+                    TrackingService.startService(this)
+                else requestLocationPermissions()
             }
-        else requestLocationPermissions()
+            R.id.stop->{
+                TrackingService.stopService(this)
+            }
+        }
     }
 
     private fun shareLocation(){
-        val uri = Uri.parse("geo:$lat,$lon")
-        val intent=Intent()
-        intent.action=(Intent.ACTION_VIEW)
-        intent.data = uri
-        if (intent.resolveActivity(packageManager) != null) {
-            startActivity(intent)
+        val locationIntent=Intent().apply{
+            action=(Intent.ACTION_VIEW)
+            data = Uri.parse("geo:$lat,$lon")
+        }
+        locationIntent.resolveActivity(packageManager)?.let {
+            startActivity(locationIntent)
         }
     }
 }

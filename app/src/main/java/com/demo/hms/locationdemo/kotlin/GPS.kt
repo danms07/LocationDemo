@@ -10,7 +10,7 @@ import com.huawei.hms.location.*
 class GPS(private val context: Context) : LocationCallback() {
 
     companion object{
-        const val TAG = "GPS Tracker"
+        const val TAG = "Location"
     }
     private var _isStarted:Boolean=false
     val isStarted: Boolean
@@ -102,6 +102,15 @@ class GPS(private val context: Context) : LocationCallback() {
             val lastLocation=locationResult.lastLocation
             listener?.onLocationUpdate(lastLocation.latitude,lastLocation.longitude)
         }
+    }
+
+    override fun onLocationAvailability(p0: LocationAvailability?) {
+
+        p0?.let{
+            val message=if(it.isLocationAvailable) "Location available" else "location unavailable"
+            Log.e("Location",message);
+        }
+        super.onLocationAvailability(p0)
     }
 
     interface OnGPSEventListener {

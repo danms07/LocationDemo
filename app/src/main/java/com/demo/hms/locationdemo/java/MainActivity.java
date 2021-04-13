@@ -37,9 +37,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!checkLocationPermissions())
             requestLocationPermissions();
         else setupGPS();
-        Button share=findViewById(R.id.share);
+        Button share=findViewById(R.id.start);
         share.setOnClickListener(this);
-        tv1=findViewById(R.id.tv1);
+        //tv1=findViewById(R.id.tv1);
     }
 
     private boolean checkLocationPermissions() {
